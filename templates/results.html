@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if is_new_data_submission %}
+        Hasil Analisis Destinasi Baru
+    {% else %}
+        Hasil Rekomendasi
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="card" id="results-card">
+    <div class="card-body">
+        <div class="card-header-custom">
+            {{ title }}
+        </div>
+
+        {% if is_new_data_submission %}
+            {# TAMPILAN FOKUS UNTUK DATA BARU #}
+            <div class="new-data-summary my-4">
+                <div class="text-center">
+                    <h5><i class="fas fa-map-marker-check me-2 text-success"></i>Destinasi Anda: {{ new_destination_details.Place_Name }}</h5>
+                    <p class="description-text">Berikut adalah detail dan hasil analisis untuk destinasi yang baru Anda masukkan.</p>
+                </div>
+
+                <div class="row justify-content-center">
+                    <div class="col-md-8 col-lg-7">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-city me-2 text-muted"></i>Kota</span>
+                                <strong>{{ new_destination_details.City }}</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-money-bill-wave me-2 text-muted"></i>Harga Tiket (Input)</span>
+                                <strong>{{ new_destination_details.Price_Formatted }}</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-star me-2 text-muted"></i>Rating (Input)</span>
+                                <div class="rating-display">
+                                    <span class="rating-stars" title="{{ new_destination_details.Rating_Original }}/5">
+                                        {% for i in range(new_destination_details.rating_full) %}<i class="fas fa-star"></i>{% endfor %}{% if new_destination_details.rating_half %}<i class="fas fa-star-half-alt"></i>{% endif %}{% for i in range(new_destination_details.rating_empty) %}<i class="far fa-star"></i>{% endfor %}
+                                    </span>
+                                    <small class="ms-2 rating-exact-value">({{ new_destination_details.Rating_Original }})</small>
+                                </div>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-clock me-2 text-muted"></i>Waktu Kunjungan (Input)</span>
+                                <strong>{{ new_destination_details.Time_Minutes_Original|int }} menit</strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <hr class="my-4">
+
+                <div class="text-center">
+                    <h6 class="mb-3"><i class="fas fa-globe-asia me-2"></i>Kesimpulan Peringkat Global</h6>
+                    <p class="lead">
+                        Destinasi <strong>{{ new_destination_details.Place_Name }}</strong> yang Anda masukkan mendapatkan
+                        <span class="rank-badge 
+                            {% if new_destination_details.Rank_Overall == 1 %}rank-1
+                            {% elif new_destination_details.Rank_Overall == 2 %}rank-2
+                            {% elif new_destination_details.Rank_Overall == 3 %}rank-3
+                            {% else %}rank-other{% endif %}">
+                            {{ new_destination_details.Rank_Overall }}
+                        </span>
+                        dari total <strong class="total-destinations-count">{{ new_destination_details.Total_Destinations_Overall }}</strong> destinasi
+                        setelah dibandingkan dengan semua data wisata yang ada.
+                    </p>
+                    <p>Skor VIKOR (Global): <strong>{{ new_destination_details.VIKOR_Score_Overall_Formatted }}</strong></p> 
+                </div>
+
+                <div class="mt-4">
+                    <h6 class="text-center"><i class="fas fa-balance-scale me-2"></i>Bobot Kriteria (Global)</h6>
+                    <p class="description-text mb-3">Bobot ini digunakan untuk perhitungan peringkat global di atas.</p>
+                    <div class="weights-table">
+                        {% for criteria_name, value in weights_for_overall_rank.items() %}
+                        <div class="weight-item">
+                            <span class="criteria-name">{{ criteria_name }}</span>
+                            <span class="criteria-weight">{{ value }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+
+        {% else %}
+            {# TAMPILAN NORMAL UNTUK PEMILIHAN KOTA #}
+            <div class="text-center mt-3">
+                <h5><i class="fas fa-info-circle me-2"></i>Informasi Analisis</h5>
+                <p class="description-text">Berikut adalah ringkasan dari proses analisis rekomendasi Anda.</p>
+            </div>
+
+            <div class="my-4">
+                <h6 class="text-center"><i class="fas fa-balance-scale me-2"></i>Bobot Kriteria (CRITIC)</h6>
+                <p class="description-text">Bobot ini menunjukkan seberapa penting setiap kriteria dalam perhitungan,
+                    ditentukan secara objektif dari data.</p>
+                <div class="weights-table">
+                    {% for criteria_name, value in weights.items() %}
+                    <div class="weight-item">
+                        <span class="criteria-name">{{ criteria_name }}</span>
+                        <span class="criteria-weight">{{ value }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <hr class="my-5">
+
+            <div class="my-4">
+                <h6 class="text-center"><i class="fas fa-trophy me-2"></i>Peringkat Rekomendasi (VIKOR)</h6>
+                <p class="description-text">Peringkat teratas adalah destinasi yang paling mendekati "solusi ideal"
+                    berdasarkan bobot kriteria di atas.</p>
+                
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th class="col-rank"><i class="fas fa-award"></i> Peringkat</th>
+                            <th class="text-start"><i class="fas fa-map-marker-alt"></i> Destinasi</th>
+                            <th class="col-price"><i class="fas fa-money-bill-wave"></i> Harga Tiket</th>
+                            <th class="col-rating"><i class="fas fa-star"></i> Rating</th>
+                            <th class="col-time"><i class="fas fa-clock"></i> Waktu (Menit)</th>
+                            <th class="col-score"><i class="fas fa-calculator"></i> Skor VIKOR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in ranked_results %}
+                        <tr>
+                            <td class="col-rank">
+                                <span class="rank-badge 
+                                    {% if row.Rank == 1 %}rank-1
+                                    {% elif row.Rank == 2 %}rank-2
+                                    {% elif row.Rank == 3 %}rank-3
+                                    {% else %}rank-other{% endif %}">
+                                    {{ row.Rank }}
+                                </span>
+                            </td>
+                            <td class="text-start">
+                                <strong>{{ row.Place_Name }}</strong>
+                                <br>
+                                <small class="text-muted">{{ row.City }}</small>
+                            </td>
+                            <td class="col-price">{{ row.Price_Formatted }}</td> 
+                            <td class="col-rating">
+                                <div class="rating-display">
+                                    <span class="rating-stars" title="{{ row.Rating }}/5">
+                                        {% for i in range(row.rating_full) %}<i class="fas fa-star"></i>{% endfor %}{% if
+                                        row.rating_half %}<i class="fas fa-star-half-alt"></i>{% endif %}{% for i in
+                                        range(row.rating_empty) %}<i class="far fa-star"></i>{% endfor %}
+                                    </span>
+                                    {# Tampilkan angka rating eksak di sini #}
+                                    <small class="ms-1 rating-exact-value">({{ row.Rating }})</small>
+                                </div>
+                            </td>
+                            <td class="col-time">{{ row.Time_Minutes|int }}</td>
+                            <td class="col-score">{{ row.VIKOR_Score_Formatted }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+        <div class="text-center mt-5">
+            <a href="/" class="btn btn-primary">
+                <i class="fas fa-arrow-left me-2"></i>Kembali ke Pencarian
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

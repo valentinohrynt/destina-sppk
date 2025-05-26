@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Cari Destinasi Impian{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+
+        {% if error %}
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <div>{{ error }}</div>
+        </div>
+        {% endif %}
+
+        <form action="/" method="post">
+            <fieldset class="mb-4">
+                <div class="text-center mb-4">
+                    <div class="section-icon"><i class="fas fa-map-marked-alt"></i></div>
+                    <legend>Cari Destinasi Impian</legend>
+                    <p class="description-text">Temukan destinasi wisata terbaik di Indonesia dengan sistem
+                        rekomendasi cerdas kami.</p>
+                </div>
+                <div class="mb-3">
+                    <label for="city_choice" class="form-label"><i class="fas fa-location-dot me-2"></i>Pilih Kota atau Semua:</label>
+                    <select name="city_choice" id="city_choice" class="form-select">
+                        {% for city in cities %}
+                        <option value="{{ city }}">{{ city }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" name="submit_button" value="city_selection" class="btn btn-primary w-100">
+                    <i class="fas fa-search me-2"></i>Tampilkan Rekomendasi
+                </button>
+            </fieldset>
+        </form>
+
+        <hr>
+
+        <form action="/" method="post">
+            <fieldset>
+                <div class="text-center mb-4">
+                    <div class="section-icon"><i class="fas fa-plus-circle"></i></div>
+                    <legend>Punya Info Destinasi Baru?</legend>
+                    <p class="description-text">Bantu kami memperkaya data dan analisis peringkatnya secara langsung!</p>
+                </div>
+                <div class="form-grid">
+                    <div class="mb-3">
+                        <label for="new_place_name" class="form-label"><i class="fas fa-mountain me-2"></i>Nama Tempat</label>
+                        <input type="text" name="new_place_name" id="new_place_name" class="form-control" placeholder="Contoh: Pantai Kuta" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_city" class="form-label"><i class="fas fa-city me-2"></i>Kota</label>
+                        <input type="text" name="new_city" id="new_city" class="form-control" placeholder="Contoh: Badung" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_price" class="form-label"><i class="fas fa-tag me-2"></i>Harga (Rp)</label>
+                        <input type="number" name="new_price" id="new_price" class="form-control" placeholder="50000" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_rating" class="form-label"><i class="fas fa-star me-2"></i>Rating (1-5)</label>
+                        <input type="number" step="0.1" min="1" max="5" name="new_rating" id="new_rating" class="form-control" placeholder="4.5" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_time" class="form-label"><i class="fas fa-clock me-2"></i>Waktu (menit)</label>
+                        <input type="number" name="new_time" id="new_time" class="form-control" placeholder="120" required>
+                    </div>
+                </div>
+                <button type="submit" name="submit_button" value="new_data" class="btn btn-success w-100">
+                    <i class="fas fa-chart-line me-2"></i>Analisis Destinasi Baru
+                </button>
+            </fieldset>
+        </form>
+    </div>
+</div>
+{% endblock %}
