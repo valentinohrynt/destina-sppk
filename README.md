@@ -26,28 +26,29 @@ DESTINA is a web-based decision support system designed to help users find the b
 * **Frontend**: HTML, CSS, JavaScript, Bootstrap 5, Font Awesome
 * **Deployment Configuration**: Vercel (as per `vercel.json`)
 
-## File Structure
+## File Structure - destina-sppk
 
-destina-sppk/
-├── app.py                      # Main Flask application logic, CRITIC and VIKOR implementations
-├── requirements.txt            # Python dependencies
-├── tourism_with_id.csv         # Dataset for tourist destinations
-├── vercel.json                 # Vercel deployment configuration
-├── static/
-│   ├── css/
-│   │   └── style.css           # Custom CSS styles for the application
-│   ├── js/
-│   │   └── script.js           # Custom JavaScript for frontend interactivity
-│   ├── images/
-│   │   └── destina_logo.png    # Application logo
-│   └── audio/
-│       ├── sound_of_java_orchestra.ogg # Background music file
-│       └── sabilulungan.ogg    # Background music file
-└── templates/
-├── base.html               # Base HTML template with navbar, footer, and common elements
-├── index.html              # Homepage with forms for city selection and new data input
-└── results.html            # Page to display recommendation results and new data analysis
+### Root Files
+- `app.py` - Main Flask application logic, CRITIC and VIKOR implementations
+- `requirements.txt` - Python dependencies
+- `tourism_with_id.csv` - Dataset for tourist destinations
+- `vercel.json` - Vercel deployment configuration
 
+### Static Assets (`static/`)
+#### CSS
+- `static/css/style.css` - Custom CSS styles for the application
+#### JavaScript
+- `static/js/script.js` - Custom JavaScript for frontend interactivity
+#### Images
+- `static/images/destina_logo.png` - Application logo
+#### Audio
+- `static/audio/sound_of_java_orchestra.ogg` - Background music file
+- `static/audio/sabilulungan.ogg` - Background music file
+
+### Templates (`templates/`)
+- `templates/base.html` - Base HTML template with navbar, footer, and common elements
+- `templates/index.html` - Homepage with forms for city selection and new data input
+- `templates/results.html` - Page to display recommendation results and new data analysis
 
 ## Setup and Installation
 
@@ -155,27 +156,29 @@ DESTINA adalah sistem pendukung keputusan berbasis web yang dirancang untuk memb
 * **Frontend**: HTML, CSS, JavaScript, Bootstrap 5, Font Awesome
 * **Konfigurasi Deployment**: Vercel (sesuai `vercel.json`)
 
-## Struktur File
+## Struktur File - destina-sppk
 
-destina-sppk/
-├── app.py                      # Logika utama aplikasi Flask, implementasi CRITIC dan VIKOR
-├── requirements.txt            # Dependensi Python
-├── tourism_with_id.csv         # Dataset untuk destinasi wisata
-├── vercel.json                 # Konfigurasi deployment Vercel
-├── static/
-│   ├── css/
-│   │   └── style.css           # Gaya CSS kustom untuk aplikasi
-│   ├── js/
-│   │   └── script.js           # JavaScript kustom untuk interaktivitas frontend
-│   ├── images/
-│   │   └── destina_logo.png    # Logo aplikasi
-│   └── audio/
-│       ├── sound_of_java_orchestra.ogg # File musik latar
-│       └── sabilulungan.ogg    # File musik latar
-└── templates/
-├── base.html               # Template HTML dasar dengan navbar, footer, dan elemen umum
-├── index.html              # Halaman utama dengan formulir untuk pemilihan kota dan input data baru
-└── results.html            # Halaman untuk menampilkan hasil rekomendasi dan analisis data baru
+### File Root
+- `app.py` - Logika utama aplikasi Flask, implementasi CRITIC dan VIKOR
+- `requirements.txt` - Dependensi Python
+- `tourism_with_id.csv` - Dataset untuk destinasi wisata
+- `vercel.json` - Konfigurasi deployment Vercel
+
+### Aset Statis (`static/`)
+#### CSS
+- `static/css/style.css` - Gaya CSS kustom untuk aplikasi
+#### JavaScript
+- `static/js/script.js` - JavaScript kustom untuk interaktivitas frontend
+#### Gambar (Images)
+- `static/images/destina_logo.png` - Logo aplikasi
+#### Audio
+- `static/audio/sound_of_java_orchestra.ogg` - File musik latar
+- `static/audio/sabilulungan.ogg` - File musik latar
+
+### Template (`templates/`)
+- `templates/base.html` - Template HTML dasar dengan navbar, footer, dan elemen umum
+- `templates/index.html` - Halaman utama dengan formulir untuk pemilihan kota dan input data baru
+- `templates/results.html` - Halaman untuk menampilkan hasil rekomendasi dan analisis data baru
 
 
 ## Pengaturan dan Instalasi
@@ -257,5 +260,3 @@ File `vercel.json` menunjukkan bahwa aplikasi ini dikonfigurasi untuk deployment
 * **Dataset**: Aplikasi menggunakan `tourism_with_id.csv`. Untuk menggunakan dataset yang berbeda, pastikan dataset tersebut memiliki kolom relevan yang serupa atau modifikasi bagian pemuatan dan pemrosesan data di `app.py` sesuai kebutuhan.
 * **Gaya**: Gaya dapat dimodifikasi di `static/css/style.css`.
 * **Perilaku Frontend**: Fungsionalitas JavaScript dapat disesuaikan di `static/js/script.js`.
-
-Terima kasih
