@@ -257,3 +257,5 @@ File `vercel.json` menunjukkan bahwa aplikasi ini dikonfigurasi untuk deployment
 * **Dataset**: Aplikasi menggunakan `tourism_with_id.csv`. Untuk menggunakan dataset yang berbeda, pastikan dataset tersebut memiliki kolom relevan yang serupa atau modifikasi bagian pemuatan dan pemrosesan data di `app.py` sesuai kebutuhan.
 * **Gaya**: Gaya dapat dimodifikasi di `static/css/style.css`.
 * **Perilaku Frontend**: Fungsionalitas JavaScript dapat disesuaikan di `static/js/script.js`.
+
+Terima kasih
