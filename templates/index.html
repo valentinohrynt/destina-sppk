@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Cari Destinasi Impian{% endblock %}
+{% block title %}Find Your Dream Destination{% endblock %}
 
 {% block content %}
 <div class="card">
@@ -17,12 +17,12 @@
             <fieldset class="mb-4">
                 <div class="text-center mb-4">
                     <div class="section-icon"><i class="fas fa-map-marked-alt"></i></div>
-                    <legend>Cari Destinasi Impian</legend>
-                    <p class="description-text">Temukan destinasi wisata terbaik di Indonesia dengan sistem
-                        rekomendasi cerdas kami.</p>
+                    <legend>Find Your Dream Destination</legend>
+                    <p class="description-text">Discover the best tourist destinations in Indonesia with our smart
+                        recommendation system.</p>
                 </div>
                 <div class="mb-3">
-                    <label for="city_choice" class="form-label"><i class="fas fa-location-dot me-2"></i>Pilih Kota atau Semua:</label>
+                    <label for="city_choice" class="form-label"><i class="fas fa-location-dot me-2"></i>Select City or All:</label>
                     <select name="city_choice" id="city_choice" class="form-select">
                         {% for city in cities %}
                         <option value="{{ city }}">{{ city }}</option>
@@ -30,7 +30,7 @@
                     </select>
                 </div>
                 <button type="submit" name="submit_button" value="city_selection" class="btn btn-primary w-100">
-                    <i class="fas fa-search me-2"></i>Tampilkan Rekomendasi
+                    <i class="fas fa-search me-2"></i>Show Recommendations
                 </button>
             </fieldset>
         </form>
@@ -41,20 +41,20 @@
             <fieldset>
                 <div class="text-center mb-4">
                     <div class="section-icon"><i class="fas fa-plus-circle"></i></div>
-                    <legend>Punya Info Destinasi Baru?</legend>
-                    <p class="description-text">Bantu kami memperkaya data dan analisis peringkatnya secara langsung!</p>
+                    <legend>Have Info on a New Destination?</legend>
+                    <p class="description-text">Help us enrich our data and analyze its ranking instantly!</p>
                 </div>
                 <div class="form-grid">
                     <div class="mb-3">
-                        <label for="new_place_name" class="form-label"><i class="fas fa-mountain me-2"></i>Nama Tempat</label>
-                        <input type="text" name="new_place_name" id="new_place_name" class="form-control" placeholder="Contoh: Pantai Kuta" required>
+                        <label for="new_place_name" class="form-label"><i class="fas fa-mountain me-2"></i>Place Name</label>
+                        <input type="text" name="new_place_name" id="new_place_name" class="form-control" placeholder="Example: Kuta Beach" required>
                     </div>
                     <div class="mb-3">
-                        <label for="new_city" class="form-label"><i class="fas fa-city me-2"></i>Kota</label>
-                        <input type="text" name="new_city" id="new_city" class="form-control" placeholder="Contoh: Badung" required>
+                        <label for="new_city" class="form-label"><i class="fas fa-city me-2"></i>City</label>
+                        <input type="text" name="new_city" id="new_city" class="form-control" placeholder="Example: Badung" required>
                     </div>
                     <div class="mb-3">
-                        <label for="new_price" class="form-label"><i class="fas fa-tag me-2"></i>Harga (Rp)</label>
+                        <label for="new_price" class="form-label"><i class="fas fa-tag me-2"></i>Price (IDR)</label>
                         <input type="number" name="new_price" id="new_price" class="form-control" placeholder="50000" required>
                     </div>
                     <div class="mb-3">
@@ -62,12 +62,28 @@
                         <input type="number" step="0.1" min="1" max="5" name="new_rating" id="new_rating" class="form-control" placeholder="4.5" required>
                     </div>
                     <div class="mb-3">
-                        <label for="new_time" class="form-label"><i class="fas fa-clock me-2"></i>Waktu (menit)</label>
-                        <input type="number" name="new_time" id="new_time" class="form-control" placeholder="120" required>
+                        <label for="new_accessibility_score" class="form-label"><i class="fas fa-route me-2"></i>Accessibility Score (1-10)</label>
+                        <input type="number" step="0.1" min="1" max="10" name="new_accessibility_score" id="new_accessibility_score" class="form-control" placeholder="e.g., 8.5" required>
                     </div>
+                     {# ---- Input Baru untuk Toilet & Parkir ---- #}
+                    <div class="mb-3">
+                        <label for="new_toilet_availability" class="form-label"><i class="fas fa-restroom me-2"></i>Toilet Availability</label>
+                        <select name="new_toilet_availability" id="new_toilet_availability" class="form-select" required>
+                            <option value="yes">Yes</option>
+                            <option value="no" selected>No</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_parking_availability" class="form-label"><i class="fas fa-parking me-2"></i>Parking Availability</label>
+                        <select name="new_parking_availability" id="new_parking_availability" class="form-select" required>
+                            <option value="yes">Yes</option>
+                            <option value="no" selected>No</option>
+                        </select>
+                    </div>
+                    {# ---- Akhir Input Baru ---- #}
                 </div>
                 <button type="submit" name="submit_button" value="new_data" class="btn btn-success w-100">
-                    <i class="fas fa-chart-line me-2"></i>Analisis Destinasi Baru
+                    <i class="fas fa-chart-line me-2"></i>Analyze New Destination
                 </button>
             </fieldset>
         </form>

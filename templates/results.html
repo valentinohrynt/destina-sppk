@@ -2,9 +2,9 @@
 
 {% block title %}
     {% if is_new_data_submission %}
-        Hasil Analisis Destinasi Baru
+        New Destination Analysis Results
     {% else %}
-        Hasil Rekomendasi
+        Recommendation Results
     {% endif %}
 {% endblock %}
 
@@ -16,22 +16,22 @@
         </div>
 
         {% if is_new_data_submission %}
-            {# TAMPILAN FOKUS UNTUK DATA BARU #}
+            {# DISPLAY FOCUS FOR NEW DATA #}
             <div class="new-data-summary my-4">
                 <div class="text-center">
-                    <h5><i class="fas fa-map-marker-check me-2 text-success"></i>Destinasi Anda: {{ new_destination_details.Place_Name }}</h5>
-                    <p class="description-text">Berikut adalah detail dan hasil analisis untuk destinasi yang baru Anda masukkan.</p>
+                    <h5><i class="fas fa-map-marker-check me-2 text-success"></i>Your Destination: {{ new_destination_details.Place_Name }}</h5>
+                    <p class="description-text">Here are the details and analysis results for the destination you just entered.</p>
                 </div>
 
                 <div class="row justify-content-center">
-                    <div class="col-md-8 col-lg-7">
+                    <div class="col-md-9 col-lg-8"> {# Lebarkan sedikit untuk kolom tambahan #}
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><i class="fas fa-city me-2 text-muted"></i>Kota</span>
+                                <span><i class="fas fa-city me-2 text-muted"></i>City</span>
                                 <strong>{{ new_destination_details.City }}</strong>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><i class="fas fa-money-bill-wave me-2 text-muted"></i>Harga Tiket (Input)</span>
+                                <span><i class="fas fa-money-bill-wave me-2 text-muted"></i>Ticket Price (Input)</span>
                                 <strong>{{ new_destination_details.Price_Formatted }}</strong>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -44,9 +44,19 @@
                                 </div>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><i class="fas fa-clock me-2 text-muted"></i>Waktu Kunjungan (Input)</span>
-                                <strong>{{ new_destination_details.Time_Minutes_Original|int }} menit</strong>
+                                <span><i class="fas fa-route me-2 text-muted"></i>Accessibility Score (Input)</span>
+                                <strong>{{ new_destination_details.Accessibility_Score_Original }}</strong>
                             </li>
+                            {# ---- Detail Baru untuk Toilet & Parkir ---- #}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-restroom me-2 text-muted"></i>Toilet Availability (Input)</span>
+                                <strong>{{ new_destination_details.Toilet_Availability_Original }}</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-parking me-2 text-muted"></i>Parking Availability (Input)</span>
+                                <strong>{{ new_destination_details.Parking_Availability_Original }}</strong>
+                            </li>
+                            {# ---- Akhir Detail Baru ---- #}
                         </ul>
                     </div>
                 </div>
@@ -54,9 +64,9 @@
                 <hr class="my-4">
 
                 <div class="text-center">
-                    <h6 class="mb-3"><i class="fas fa-globe-asia me-2"></i>Kesimpulan Peringkat Global</h6>
+                    <h6 class="mb-3"><i class="fas fa-globe-asia me-2"></i>Global Ranking Summary</h6>
                     <p class="lead">
-                        Destinasi <strong>{{ new_destination_details.Place_Name }}</strong> yang Anda masukkan mendapatkan
+                        The destination <strong>{{ new_destination_details.Place_Name }}</strong> you entered is ranked
                         <span class="rank-badge 
                             {% if new_destination_details.Rank_Overall == 1 %}rank-1
                             {% elif new_destination_details.Rank_Overall == 2 %}rank-2
@@ -64,15 +74,15 @@
                             {% else %}rank-other{% endif %}">
                             {{ new_destination_details.Rank_Overall }}
                         </span>
-                        dari total <strong class="total-destinations-count">{{ new_destination_details.Total_Destinations_Overall }}</strong> destinasi
-                        setelah dibandingkan dengan semua data wisata yang ada.
+                        out of a total of <strong class="total-destinations-count">{{ new_destination_details.Total_Destinations_Overall }}</strong> destinations
+                        when compared with all existing tourist data.
                     </p>
-                    <p>Skor VIKOR (Global): <strong>{{ new_destination_details.VIKOR_Score_Overall_Formatted }}</strong></p> 
+                    <p>VIKOR Score (Global): <strong>{{ new_destination_details.VIKOR_Score_Overall_Formatted }}</strong></p> 
                 </div>
 
                 <div class="mt-4">
-                    <h6 class="text-center"><i class="fas fa-balance-scale me-2"></i>Bobot Kriteria (Global)</h6>
-                    <p class="description-text mb-3">Bobot ini digunakan untuk perhitungan peringkat global di atas.</p>
+                    <h6 class="text-center"><i class="fas fa-balance-scale me-2"></i>Criteria Weights (Global)</h6>
+                    <p class="description-text mb-3">These weights were used for the global ranking calculation above.</p>
                     <div class="weights-table">
                         {% for criteria_name, value in weights_for_overall_rank.items() %}
                         <div class="weight-item">
@@ -82,20 +92,19 @@
                         {% endfor %}
                     </div>
                 </div>
-
             </div>
 
         {% else %}
-            {# TAMPILAN NORMAL UNTUK PEMILIHAN KOTA #}
+            {# NORMAL DISPLAY FOR CITY SELECTION #}
             <div class="text-center mt-3">
-                <h5><i class="fas fa-info-circle me-2"></i>Informasi Analisis</h5>
-                <p class="description-text">Berikut adalah ringkasan dari proses analisis rekomendasi Anda.</p>
+                <h5><i class="fas fa-info-circle me-2"></i>Analysis Information</h5>
+                <p class="description-text">Here is a summary of your recommendation analysis process.</p>
             </div>
 
             <div class="my-4">
-                <h6 class="text-center"><i class="fas fa-balance-scale me-2"></i>Bobot Kriteria (CRITIC)</h6>
-                <p class="description-text">Bobot ini menunjukkan seberapa penting setiap kriteria dalam perhitungan,
-                    ditentukan secara objektif dari data.</p>
+                <h6 class="text-center"><i class="fas fa-balance-scale me-2"></i>Criteria Weights (CRITIC)</h6>
+                <p class="description-text">These weights indicate how important each criterion is in the calculation,
+                    determined objectively from the data.</p>
                 <div class="weights-table">
                     {% for criteria_name, value in weights.items() %}
                     <div class="weight-item">
@@ -109,19 +118,24 @@
             <hr class="my-5">
 
             <div class="my-4">
-                <h6 class="text-center"><i class="fas fa-trophy me-2"></i>Peringkat Rekomendasi (VIKOR)</h6>
-                <p class="description-text">Peringkat teratas adalah destinasi yang paling mendekati "solusi ideal"
-                    berdasarkan bobot kriteria di atas.</p>
+                <h6 class="text-center"><i class="fas fa-trophy me-2"></i>Recommendation Ranking (VIKOR)</h6>
+                <p class="description-text">The top-ranked destinations are those closest to the "ideal solution"
+                    based on the criteria weights above.</p>
                 
+                <div class="table-responsive"> {# Tambahkan ini untuk tabel yang mungkin lebar #}
                 <table class="results-table">
                     <thead>
                         <tr>
-                            <th class="col-rank"><i class="fas fa-award"></i> Peringkat</th>
-                            <th class="text-start"><i class="fas fa-map-marker-alt"></i> Destinasi</th>
-                            <th class="col-price"><i class="fas fa-money-bill-wave"></i> Harga Tiket</th>
+                            <th class="col-rank"><i class="fas fa-award"></i> Rank</th>
+                            <th class="text-start"><i class="fas fa-map-marker-alt"></i> Destination</th>
+                            <th class="col-price"><i class="fas fa-money-bill-wave"></i> Ticket Price</th>
                             <th class="col-rating"><i class="fas fa-star"></i> Rating</th>
-                            <th class="col-time"><i class="fas fa-clock"></i> Waktu (Menit)</th>
-                            <th class="col-score"><i class="fas fa-calculator"></i> Skor VIKOR</th>
+                            <th class="col-accessibility"><i class="fas fa-route"></i> Accessibility</th> {# Diubah #}
+                             {# ---- Kolom Baru untuk Toilet & Parkir ---- #}
+                            <th class="col-facility"><i class="fas fa-restroom"></i> Toilet</th>
+                            <th class="col-facility"><i class="fas fa-parking"></i> Parking</th>
+                             {# ---- Akhir Kolom Baru ---- #}
+                            <th class="col-score"><i class="fas fa-calculator"></i> VIKOR Score</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -144,27 +158,31 @@
                             <td class="col-price">{{ row.Price_Formatted }}</td> 
                             <td class="col-rating">
                                 <div class="rating-display">
-                                    <span class="rating-stars" title="{{ row.Rating }}/5">
+                                    <span class="rating-stars" title="{{ row.Rating_Display }}/5"> {# Gunakan Rating_Display #}
                                         {% for i in range(row.rating_full) %}<i class="fas fa-star"></i>{% endfor %}{% if
                                         row.rating_half %}<i class="fas fa-star-half-alt"></i>{% endif %}{% for i in
                                         range(row.rating_empty) %}<i class="far fa-star"></i>{% endfor %}
                                     </span>
-                                    {# Tampilkan angka rating eksak di sini #}
-                                    <small class="ms-1 rating-exact-value">({{ row.Rating }})</small>
+                                    <small class="ms-1 rating-exact-value">({{ row.Rating_Display }})</small> {# Gunakan Rating_Display #}
                                 </div>
                             </td>
-                            <td class="col-time">{{ row.Time_Minutes|int }}</td>
+                            <td class="col-accessibility">{{ row.Accessibility_Score_Formatted }}</td>
+                            {# ---- Data Baru untuk Toilet & Parkir ---- #}
+                            <td class="col-facility">{{ row.Toilet_Availability_For_Display }}</td>
+                            <td class="col-facility">{{ row.Parking_Availability_For_Display }}</td>
+                            {# ---- Akhir Data Baru ---- #}
                             <td class="col-score">{{ row.VIKOR_Score_Formatted }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
+                </div>
             </div>
         {% endif %}
 
         <div class="text-center mt-5">
             <a href="/" class="btn btn-primary">
-                <i class="fas fa-arrow-left me-2"></i>Kembali ke Pencarian
+                <i class="fas fa-arrow-left me-2"></i>Back to Search
             </a>
         </div>
     </div>
