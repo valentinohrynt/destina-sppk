@@ -8,8 +8,8 @@ app = Flask(__name__)
 
 # --- Memuat dan Membersihkan Data ---
 try:
-    df = pd.read_csv('tourism_data_updated.csv.csv')
-    print("File 'tourism_data_updated.csv.csv' berhasil dimuat.")
+    df = pd.read_csv('tourism_data_updated.csv')
+    print("File 'tourism_data_updated.csv' berhasil dimuat.")
 
     # Konversi 'yes'/'no' ke 1/0 untuk kolom fasilitas
     if 'Toilet_Availability' in df.columns:
@@ -47,7 +47,7 @@ try:
 
     CITIES = ['All'] + sorted(df['City'].unique().tolist())
 except FileNotFoundError:
-    print("ERROR: File 'tourism_data_updated.csv.csv' not found. Make sure it's in the same folder as app.py.")
+    print("ERROR: File 'tourism_data_updated.csv' not found. Make sure it's in the same folder as app.py.")
     df = pd.DataFrame() # Buat DataFrame kosong agar aplikasi tidak crash total
     CITIES = ['All']
 except Exception as e:
@@ -182,7 +182,7 @@ def vikor_method(data, weights, benefit_cols):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if df.empty and request.method == 'POST': # Jika df kosong dan ada POST, berarti CSV gagal load
-         return render_template('index.html', cities=CITIES, error="Dataset could not be loaded. Please check the server console for errors regarding 'tourism_data_updated.csv.csv'.")
+         return render_template('index.html', cities=CITIES, error="Dataset could not be loaded. Please check the server console for errors regarding 'tourism_data_updated.csv'.")
 
     if request.method == 'POST': 
         temp_df_original = df.copy() 
