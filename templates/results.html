@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="row justify-content-center">
-                    <div class="col-md-9 col-lg-8"> {# Lebarkan sedikit untuk kolom tambahan #}
+                    <div class="col-md-9 col-lg-8">
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span><i class="fas fa-city me-2 text-muted"></i>City</span>
@@ -47,7 +47,12 @@
                                 <span><i class="fas fa-route me-2 text-muted"></i>Accessibility Score (Input)</span>
                                 <strong>{{ new_destination_details.Accessibility_Score_Original }}</strong>
                             </li>
-                            {# ---- Detail Baru untuk Toilet & Parkir ---- #}
+                            {# ---- Detail Time_Minutes dikembalikan ---- #}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-clock me-2 text-muted"></i>Time (Minutes) (Input)</span>
+                                <strong>{{ new_destination_details.Time_Minutes_Original|int }} min</strong>
+                            </li>
+                            {# ---- Akhir Detail Time_Minutes ---- #}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span><i class="fas fa-restroom me-2 text-muted"></i>Toilet Availability (Input)</span>
                                 <strong>{{ new_destination_details.Toilet_Availability_Original }}</strong>
@@ -56,7 +61,6 @@
                                 <span><i class="fas fa-parking me-2 text-muted"></i>Parking Availability (Input)</span>
                                 <strong>{{ new_destination_details.Parking_Availability_Original }}</strong>
                             </li>
-                            {# ---- Akhir Detail Baru ---- #}
                         </ul>
                     </div>
                 </div>
@@ -86,7 +90,7 @@
                     <div class="weights-table">
                         {% for criteria_name, value in weights_for_overall_rank.items() %}
                         <div class="weight-item">
-                            <span class="criteria-name">{{ criteria_name }}</span>
+                            <span class="criteria-name">{{ criteria_name.replace('_', ' ') }}</span> {# Ganti _ dengan spasi untuk tampilan #}
                             <span class="criteria-weight">{{ value }}</span>
                         </div>
                         {% endfor %}
@@ -108,7 +112,7 @@
                 <div class="weights-table">
                     {% for criteria_name, value in weights.items() %}
                     <div class="weight-item">
-                        <span class="criteria-name">{{ criteria_name }}</span>
+                        <span class="criteria-name">{{ criteria_name.replace('_', ' ') }}</span> {# Ganti _ dengan spasi untuk tampilan #}
                         <span class="criteria-weight">{{ value }}</span>
                     </div>
                     {% endfor %}
@@ -122,19 +126,18 @@
                 <p class="description-text">The top-ranked destinations are those closest to the "ideal solution"
                     based on the criteria weights above.</p>
                 
-                <div class="table-responsive"> {# Tambahkan ini untuk tabel yang mungkin lebar #}
+                <div class="table-responsive">
                 <table class="results-table">
                     <thead>
                         <tr>
                             <th class="col-rank"><i class="fas fa-award"></i> Rank</th>
-                            <th class="text-start"><i class="fas fa-map-marker-alt"></i> Destination</th>
-                            <th class="col-price"><i class="fas fa-money-bill-wave"></i> Ticket Price</th>
+                            <th class="text-start col-destination"><i class="fas fa-map-marker-alt"></i> Destination</th>
+                            <th class="col-price"><i class="fas fa-money-bill-wave"></i> Price</th>
                             <th class="col-rating"><i class="fas fa-star"></i> Rating</th>
-                            <th class="col-accessibility"><i class="fas fa-route"></i> Accessibility</th> {# Diubah #}
-                             {# ---- Kolom Baru untuk Toilet & Parkir ---- #}
+                            <th class="col-accessibility"><i class="fas fa-route"></i> Accessibility</th>
+                            <th class="col-time"><i class="fas fa-clock"></i> Time</th> {# Kolom Time_Minutes dikembalikan #}
                             <th class="col-facility"><i class="fas fa-restroom"></i> Toilet</th>
                             <th class="col-facility"><i class="fas fa-parking"></i> Parking</th>
-                             {# ---- Akhir Kolom Baru ---- #}
                             <th class="col-score"><i class="fas fa-calculator"></i> VIKOR Score</th>
                         </tr>
                     </thead>
@@ -150,7 +153,7 @@
                                     {{ row.Rank }}
                                 </span>
                             </td>
-                            <td class="text-start">
+                            <td class="text-start col-destination">
                                 <strong>{{ row.Place_Name }}</strong>
                                 <br>
                                 <small class="text-muted">{{ row.City }}</small>
@@ -158,19 +161,19 @@
                             <td class="col-price">{{ row.Price_Formatted }}</td> 
                             <td class="col-rating">
                                 <div class="rating-display">
-                                    <span class="rating-stars" title="{{ row.Rating_Display }}/5"> {# Gunakan Rating_Display #}
+                                    <span class="rating-stars" title="{{ row.Rating_Display }}/5">
                                         {% for i in range(row.rating_full) %}<i class="fas fa-star"></i>{% endfor %}{% if
                                         row.rating_half %}<i class="fas fa-star-half-alt"></i>{% endif %}{% for i in
                                         range(row.rating_empty) %}<i class="far fa-star"></i>{% endfor %}
                                     </span>
-                                    <small class="ms-1 rating-exact-value">({{ row.Rating_Display }})</small> {# Gunakan Rating_Display #}
+                                    <small class="ms-1 rating-exact-value">({{ row.Rating_Display }})</small>
                                 </div>
                             </td>
                             <td class="col-accessibility">{{ row.Accessibility_Score_Formatted }}</td>
-                            {# ---- Data Baru untuk Toilet & Parkir ---- #}
+                             {# Data Time_Minutes dikembalikan #}
+                            <td class="col-time">{{ row.Time_Minutes_Formatted }}</td>
                             <td class="col-facility">{{ row.Toilet_Availability_For_Display }}</td>
                             <td class="col-facility">{{ row.Parking_Availability_For_Display }}</td>
-                            {# ---- Akhir Data Baru ---- #}
                             <td class="col-score">{{ row.VIKOR_Score_Formatted }}</td>
                         </tr>
                         {% endfor %}
