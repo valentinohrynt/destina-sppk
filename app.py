@@ -56,10 +56,10 @@ except Exception as e:
     CITIES = ['All']
 
 
-# --- Fungsi CRITIC dan VIKOR (Logika tetap sama) ---
+# --- Fungsi CRITIC dan VIKOR ---
 def critic_weight(data):
     epsilon = 1e-9 
-    numeric_data = data.apply(pd.to_numeric, errors='coerce').dropna() # Hapus baris dg NaN setelah konversi
+    numeric_data = data.apply(pd.to_numeric, errors='coerce').dropna()
     if len(numeric_data) <= 1:
         if not data.columns.empty:
             return pd.Series([1/len(data.columns)] * len(data.columns), index=data.columns)
@@ -89,7 +89,7 @@ def critic_weight(data):
             return pd.Series([1/len(data.columns)] * len(data.columns), index=data.columns)
         else:
             return pd.Series([])
-            
+        
     weights = c_j / c_j.sum() 
     return weights
 
@@ -127,38 +127,11 @@ def vikor_method(data, weights, benefit_cols):
 
     weighted_normalized = normalized_data.multiply(weights, axis='columns') 
     
-    # Hitung S dan R untuk setiap alternatif
-    # Menggunakan ideal_positive yang sudah benar (nilai terbaik, min untuk cost, max untuk benefit)
-    # Rumus VIKOR: sum[ w_i * (f*_i - f_ij) / (f*_i - f^-_i) ] -- ini jika dinormalisasi dulu ke [0,1] dg f*_i jadi 1 dan f^-_i jadi 0
-    # Atau lebih sederhana: w_i * |f*_i - f_ij|
-    # Untuk S_values, kita ingin jarak dari ideal_positive (nilai terbaik)
-    # Untuk R_values, kita ingin jarak maksimum dari ideal_positive
-    
-    # Jarak dari ideal_positive (nilai terbaik yang dinormalisasi)
-    # Jika f*_i adalah nilai terbaik (max untuk benefit, min untuk cost pada data asli),
-    # maka pada data ternormalisasi (0-1, dimana 1 adalah terbaik utk benefit, 0 terbaik utk cost setelah pembalikan jika perlu)
-    # atau (nilai - min)/(max-min), dimana 1 adalah max, 0 adalah min.
-
-    # ideal_positive Series berisi nilai terbaik (1 untuk benefit, 0 untuk cost setelah normalisasi tipe (max-x)/(max-min) atau (x-min)/(max-min) dan idealnya 0).
-    # Sederhananya, kita hitung perbedaan ternormalisasi terbobot dari nilai ideal positif.
-    # nilai f_ij adalah nilai pada weighted_normalized[col]
-    # nilai f*_i adalah ideal_positive[col] yang sudah terbobot juga (atau bobot diterapkan pada perbedaan)
-    
-    # Perhitungan S dan R:
-    # S_i = sum_j {w_j * (|f*_j - f_ij| / |f*_j - f^-_j|)}
-    # R_i = max_j {w_j * (|f*_j - f_ij| / |f*_j - f^-_j|)}
-    # Di sini, f*_j dan f^-_j adalah nilai ideal positif dan negatif dari kriteria j (setelah normalisasi)
-    # f_ij adalah nilai kriteria j untuk alternatif i (setelah normalisasi)
-    
-    # Kita sudah menormalisasi data (0-1).
-    # ideal_positive dan ideal_negative adalah nilai 0 atau 1 pada skala normalisasi.
-    # Jadi |f*_j - f^-_j| adalah 1.
-    
     s_values = pd.Series(0.0, index=numeric_data.index)
     r_values = pd.Series(0.0, index=numeric_data.index)
 
     for col in numeric_data.columns:
-        term = weights[col] * ( (ideal_positive[col] - normalized_data[col]).abs() ) # Tidak perlu dibagi (ideal_positive[col] - ideal_negative[col]).abs() karena itu 1
+        term = weights[col] * ( (ideal_positive[col] - normalized_data[col]).abs() )
         s_values += term
         r_values = np.maximum(r_values, term)
 
@@ -168,7 +141,6 @@ def vikor_method(data, weights, benefit_cols):
     s_diff = s_minus - s_star
     r_diff = r_minus - r_star
     
-    # Handle pembagian dengan nol
     q_s_component = ((s_values - s_star) / (s_diff + epsilon))
     q_r_component = ((r_values - r_star) / (r_diff + epsilon))
     
@@ -182,17 +154,19 @@ def vikor_method(data, weights, benefit_cols):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if df.empty and request.method == 'POST': # Jika df kosong dan ada POST, berarti CSV gagal load
-         return render_template('index.html', cities=CITIES, error="Dataset could not be loaded. Please check the server console for errors regarding 'tourism_data_updated.csv'.")
+        return render_template('index.html', cities=CITIES, error="Dataset could not be loaded. Please check the server console for errors regarding 'tourism_data_updated.csv'.")
 
     if request.method == 'POST': 
         temp_df_original = df.copy() 
         submit_type = request.form.get('submit_button') 
         title = "" 
         
-        # --- Kriteria dikembalikan dengan Time_Minutes ---
+        # --- Kriteria didefinisikan di sini ---
         criteria = ['Price', 'Rating', 'Accessibility_Score', 'Toilet_Availability', 'Parking_Availability', 'Time_Minutes'] 
-        benefit_criteria = ['Rating', 'Accessibility_Score', 'Toilet_Availability', 'Parking_Availability'] 
-        # Time_Minutes adalah cost criterion, jadi tidak masuk benefit_criteria
+        
+        # === PERUBAHAN DI SINI ===
+        # Time_Minutes sekarang dianggap sebagai BENEFIT (semakin lama semakin bagus)
+        benefit_criteria = ['Rating', 'Accessibility_Score', 'Toilet_Availability', 'Parking_Availability', 'Time_Minutes'] 
         # --- Akhir Perubahan Kriteria ---
         
         if submit_type == 'city_selection': 
@@ -223,7 +197,7 @@ def index():
             vikor_rankings_for_selection = vikor_method(numerical_data, weights_for_selection, benefit_criteria)
             
             if vikor_rankings_for_selection.empty:
-                 return render_template('index.html', cities=CITIES, error="Could not compute VIKOR rankings, possibly due to insufficient distinct data after processing.")
+                return render_template('index.html', cities=CITIES, error="Could not compute VIKOR rankings, possibly due to insufficient distinct data after processing.")
 
             ranked_results = data_to_process.loc[numerical_data.index].loc[vikor_rankings_for_selection.index].copy()
             
@@ -234,11 +208,11 @@ def index():
             ranked_results['VIKOR_Score_Formatted'] = ranked_results['VIKOR_Score'].apply(format_angka_tampilan)
             
             if 'Rating' in ranked_results.columns:
-                 ranked_results['Rating_Display'] = ranked_results['Rating'].astype(float)
+                    ranked_results['Rating_Display'] = ranked_results['Rating'].astype(float)
             if 'Accessibility_Score' in ranked_results.columns:
-                 ranked_results['Accessibility_Score_Formatted'] = ranked_results['Accessibility_Score'].apply(lambda x: format_angka_tampilan(x, maks_desimal=1))
+                    ranked_results['Accessibility_Score_Formatted'] = ranked_results['Accessibility_Score'].apply(lambda x: format_angka_tampilan(x, maks_desimal=1))
             if 'Time_Minutes' in ranked_results.columns: # Tambahkan format untuk Time_Minutes
-                 ranked_results['Time_Minutes_Formatted'] = ranked_results['Time_Minutes'].apply(lambda x: f"{format_angka_tampilan(x, maks_desimal=0)} min")
+                    ranked_results['Time_Minutes_Formatted'] = ranked_results['Time_Minutes'].apply(lambda x: f"{format_angka_tampilan(x, maks_desimal=0)} min")
 
 
             ranked_results['Toilet_Availability_For_Display'] = ranked_results.get('Toilet_Availability_Display', pd.Series(['N/A'] * len(ranked_results))).str.capitalize()
@@ -270,10 +244,10 @@ def index():
             weights_dict_for_selection = {k: format_angka_tampilan(v) for k, v in weights_for_selection.to_dict().items()}
 
             return render_template('results.html', 
-                                   title=title, 
-                                   ranked_results=ranked_results.to_dict('records'),
-                                   weights=weights_dict_for_selection,
-                                   is_new_data_submission=False)
+                                    title=title, 
+                                    ranked_results=ranked_results.to_dict('records'),
+                                    weights=weights_dict_for_selection,
+                                    is_new_data_submission=False)
 
         elif submit_type == 'new_data': 
             try:
@@ -311,7 +285,7 @@ def index():
 
             missing_criteria_overall = [c for c in criteria if c not in df_for_overall_ranking.columns]
             if missing_criteria_overall:
-                 return render_template('index.html', cities=CITIES, error=f"The following criteria columns are missing for overall data: {', '.join(missing_criteria_overall)}.")
+                    return render_template('index.html', cities=CITIES, error=f"The following criteria columns are missing for overall data: {', '.join(missing_criteria_overall)}.")
 
             numerical_data_overall = df_for_overall_ranking[criteria].copy()
             for col in criteria:
@@ -325,7 +299,7 @@ def index():
             vikor_rankings_overall = vikor_method(numerical_data_overall, weights_overall, benefit_criteria)
 
             if vikor_rankings_overall.empty:
-                 return render_template('index.html', cities=CITIES, error="Could not compute VIKOR rankings for new data, possibly due to insufficient distinct data after processing.")
+                    return render_template('index.html', cities=CITIES, error="Could not compute VIKOR rankings for new data, possibly due to insufficient distinct data after processing.")
             
             ranked_results_overall = df_for_overall_ranking.loc[numerical_data_overall.index].loc[vikor_rankings_overall.index].copy()
             
@@ -375,10 +349,10 @@ def index():
             weights_dict_overall = {k: format_angka_tampilan(v) for k, v in weights_overall.to_dict().items()}
 
             return render_template('results.html',
-                                   title=title,
-                                   is_new_data_submission=True,
-                                   new_destination_details=new_destination_details,
-                                   weights_for_overall_rank=weights_dict_overall)
+                                    title=title,
+                                    is_new_data_submission=True,
+                                    new_destination_details=new_destination_details,
+                                    weights_for_overall_rank=weights_dict_overall)
         else:
             return render_template('index.html', cities=CITIES)
 
