@@ -20,84 +20,84 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    const music = document.getElementById('backgroundMusic');
-    const muteButton = document.getElementById('muteButton');
-    const songNameDisplay = document.getElementById('songName');
+    // const music = document.getElementById('backgroundMusic');
+    // const muteButton = document.getElementById('muteButton');
+    // const songNameDisplay = document.getElementById('songName');
 
-    const playlist = [
-        { name: 'Sound of Java Orchestra', src: '/static/audio/sound_of_java_orchestra.ogg' },
-        { name: 'Sabilulungan', src: '/static/audio/sabilulungan.ogg' },
-    ];
+    // const playlist = [
+    //     { name: 'Sound of Java Orchestra', src: '/static/audio/sound_of_java_orchestra.ogg' },
+    //     { name: 'Sabilulungan', src: '/static/audio/sabilulungan.ogg' },
+    // ];
 
-    let currentSongIndex = localStorage.getItem('music_songIndex') ? parseInt(localStorage.getItem('music_songIndex')) : 0;
-    if (playlist.length > 0) {
-        currentSongIndex = localStorage.getItem('music_songIndex') ? parseInt(localStorage.getItem('music_songIndex')) : Math.floor(Math.random() * playlist.length);
-    }
+    // let currentSongIndex = localStorage.getItem('music_songIndex') ? parseInt(localStorage.getItem('music_songIndex')) : 0;
+    // if (playlist.length > 0) {
+    //     currentSongIndex = localStorage.getItem('music_songIndex') ? parseInt(localStorage.getItem('music_songIndex')) : Math.floor(Math.random() * playlist.length);
+    // }
 
 
-    function loadSong(songIndex) {
-        if (playlist.length === 0) {
-            if (songNameDisplay) songNameDisplay.textContent = "Tidak ada lagu";
-            return;
-        }
-        songIndex = songIndex % playlist.length;
-        const song = playlist[songIndex];
-        music.src = song.src;
-        if (songNameDisplay) songNameDisplay.textContent = song.name;
+    // function loadSong(songIndex) {
+    //     if (playlist.length === 0) {
+    //         if (songNameDisplay) songNameDisplay.textContent = "Tidak ada lagu";
+    //         return;
+    //     }
+    //     songIndex = songIndex % playlist.length;
+    //     const song = playlist[songIndex];
+    //     music.src = song.src;
+    //     if (songNameDisplay) songNameDisplay.textContent = song.name;
 
-        music.currentTime = parseFloat(localStorage.getItem('music_currentTime')) || 0;
+    //     music.currentTime = parseFloat(localStorage.getItem('music_currentTime')) || 0;
 
-        // Atur status mute berdasarkan localStorage, defaultnya tidak mute jika belum ada setting
-        music.muted = localStorage.getItem('music_isMuted') === 'true';
-        updateMuteButton();
+    //     // Atur status mute berdasarkan localStorage, defaultnya tidak mute jika belum ada setting
+    //     music.muted = localStorage.getItem('music_isMuted') === 'true';
+    //     updateMuteButton();
 
-        // Coba putar. Jika gagal karena autoplay, akan ditangkap.
-        // Jika berhasil tapi muted, akan berputar tanpa suara.
-        music.play().catch(error => {
-            console.log("Autoplay dicegah. Pengguna harus berinteraksi dulu. Error:", error);
-            // Anda bisa menambahkan UI feedback di sini jika mau, misal ikon play/pause di tombol mute
-        });
-    }
+    //     // Coba putar. Jika gagal karena autoplay, akan ditangkap.
+    //     // Jika berhasil tapi muted, akan berputar tanpa suara.
+    //     music.play().catch(error => {
+    //         console.log("Autoplay dicegah. Pengguna harus berinteraksi dulu. Error:", error);
+    //         // Anda bisa menambahkan UI feedback di sini jika mau, misal ikon play/pause di tombol mute
+    //     });
+    // }
 
-    function updateMuteButton() {
-        if (muteButton) { // Pastikan tombol ada
-            muteButton.innerHTML = music.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
-        }
-    }
+    // function updateMuteButton() {
+    //     if (muteButton) { // Pastikan tombol ada
+    //         muteButton.innerHTML = music.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+    //     }
+    // }
 
-    if (muteButton && music) {
-        muteButton.addEventListener('click', function () {
-            music.muted = !music.muted;
-            localStorage.setItem('music_isMuted', music.muted);
-            updateMuteButton();
+    // if (muteButton && music) {
+    //     muteButton.addEventListener('click', function () {
+    //         music.muted = !music.muted;
+    //         localStorage.setItem('music_isMuted', music.muted);
+    //         updateMuteButton();
 
-            // Jika musik di-unmute dan sedang di-pause (mungkin karena autoplay gagal), coba putar lagi.
-            if (!music.muted && music.paused) {
-                music.play().catch(e => console.log("Gagal play setelah interaksi unmute:", e));
-            }
-        });
-    }
+    //         // Jika musik di-unmute dan sedang di-pause (mungkin karena autoplay gagal), coba putar lagi.
+    //         if (!music.muted && music.paused) {
+    //             music.play().catch(e => console.log("Gagal play setelah interaksi unmute:", e));
+    //         }
+    //     });
+    // }
 
-    if (music) {
-        music.addEventListener('timeupdate', function () {
-            localStorage.setItem('music_currentTime', music.currentTime);
-        });
+    // if (music) {
+    //     music.addEventListener('timeupdate', function () {
+    //         localStorage.setItem('music_currentTime', music.currentTime);
+    //     });
 
-        music.addEventListener('ended', function () {
-            if (playlist.length > 0) {
-                currentSongIndex = (currentSongIndex + 1) % playlist.length;
-                localStorage.setItem('music_songIndex', currentSongIndex);
-                localStorage.setItem('music_currentTime', 0);
-                loadSong(currentSongIndex);
-            }
-        });
-    }
+    //     music.addEventListener('ended', function () {
+    //         if (playlist.length > 0) {
+    //             currentSongIndex = (currentSongIndex + 1) % playlist.length;
+    //             localStorage.setItem('music_songIndex', currentSongIndex);
+    //             localStorage.setItem('music_currentTime', 0);
+    //             loadSong(currentSongIndex);
+    //         }
+    //     });
+    // }
 
-    if (playlist.length > 0 && music) {
-        loadSong(currentSongIndex);
-    } else if (songNameDisplay) {
-        songNameDisplay.textContent = "Tidak ada lagu dalam playlist.";
-    }
+    // if (playlist.length > 0 && music) {
+    //     loadSong(currentSongIndex);
+    // } else if (songNameDisplay) {
+    //     songNameDisplay.textContent = "Tidak ada lagu dalam playlist.";
+    // }
 
 
     const resultsCard = document.getElementById('results-card');
